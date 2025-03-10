@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Produtos em Estoque</h1>
+
+        <!-- Formulário de Pesquisa -->
+        <form method="GET" action="{{ url_for('index') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="pesquisa" class="form-control" placeholder="Pesquisar por nome ou código" value="{{ pesquisa }}">
+                <button type="submit" class="btn btn-primary">Pesquisar</button>
+            </div>
+        </form>
+
+        <!-- Lista de Produtos -->
+        <div class="row">
+            {% for produto in produtos.items %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ produto.nome }}</h5>
+                            <p class="card-text">
+                                <strong>Código:</strong> {{ produto.codigo }}<br>
+                                <strong>Quantidade:</strong> {{ produto.quantidade }}<br>
+                                <strong>Preço:</strong> R$ {{ "%.2f"|format(produto.preco) }}
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('editar_produto', id=produto.id) }}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                                <form action="{{ url_for('excluir_produto', id=produto.id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="bi bi-trash"></i> Excluir
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        Nenhum produto encontrado.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginação -->
+        <nav aria-label="Navegação de páginas">
+            <ul class="pagination">
+                {% if produtos.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('index', pagina=produtos.prev_num, pesquisa=pesquisa) }}" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;</span>
+                    </li>
+                {% endif %}
+
+                {% for num in produtos.iter_pages() %}
+                    {% if num %}
+                        <li class="page-item {% if num == produtos.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('index', pagina=num, pesquisa=pesquisa) }}">{{ num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if produtos.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('index', pagina=produtos.next_num, pesquisa=pesquisa) }}" aria-label="Próximo">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&raquo;</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <!-- Botão para Adicionar Produto -->
+        <a href="{{ url_for('adicionar_produto') }}" class="btn btn-primary">
+            <i class="bi bi-plus"></i> Adicionar Produto
+        </a>
+    </div>
+{% endblock %}

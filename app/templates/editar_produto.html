@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Editar Produto</h1>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="codigo" class="form-label">Código</label>
+                <input type="text" class="form-control" id="codigo" name="codigo" value="{{ produto.codigo }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ produto.nome }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="quantidade" class="form-label">Quantidade</label>
+                <input type="number" class="form-control" id="quantidade" name="quantidade" value="{{ produto.quantidade }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="preco" class="form-label">Preço</label>
+                <input type="number" step="0.01" class="form-control" id="preco" name="preco" value="{{ produto.preco }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}
