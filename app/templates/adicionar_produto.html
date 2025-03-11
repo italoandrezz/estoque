@@ -5,10 +5,6 @@
         <h1 class="mb-4">Adicionar Produto</h1>
         <form method="POST">
             <div class="mb-3">
-                <label for="codigo" class="form-label">Código</label>
-                <input type="text" class="form-control" id="codigo" name="codigo" required>
-            </div>
-            <div class="mb-3">
                 <label for="nome" class="form-label">Nome</label>
                 <input type="text" class="form-control" id="nome" name="nome" required>
             </div>
@@ -24,4 +20,39 @@
             <a href="{{ url_for('index') }}" class="btn btn-secondary">Voltar</a>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const nome = document.getElementById('nome');
+            const quantidade = document.getElementById('quantidade');
+            const preco = document.getElementById('preco');
+    
+            form.addEventListener('submit', function(event) {
+                let valid = true;
+    
+                // Validação do Nome
+                if (nome.value.trim() === '') {
+                    alert('O campo "Nome" é obrigatório.');
+                    valid = false;
+                }
+    
+                // Validação da Quantidade
+                if (quantidade.value.trim() === '' || isNaN(quantidade.value) || parseInt(quantidade.value) < 0) {
+                    alert('O campo "Quantidade" deve ser um número positivo.');
+                    valid = false;
+                }
+    
+                // Validação do Preço
+                if (preco.value.trim() === '' || isNaN(preco.value) || parseFloat(preco.value) < 0) {
+                    alert('O campo "Preço" deve ser um número positivo.');
+                    valid = false;
+                }
+    
+                if (!valid) {
+                    event.preventDefault(); // Impede o envio do formulário se houver erros
+                }
+            });
+        });
+    </script>
 {% endblock %}

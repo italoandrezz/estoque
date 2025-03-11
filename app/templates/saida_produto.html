@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Saída de Produto</h1>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="quantidade" class="form-label">Quantidade</label>
+                <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+            </div>
+            <div class="mb-3">
+                <label for="motivo" class="form-label">Motivo (opcional)</label>
+                <input type="text" class="form-control" id="motivo" name="motivo">
+            </div>
+            <button type="submit" class="btn btn-primary">Registrar Saída</button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

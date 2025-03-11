@@ -6,15 +6,11 @@
         <form method="POST">
             <div class="mb-3">
                 <label for="codigo" class="form-label">Código</label>
-                <input type="text" class="form-control" id="codigo" name="codigo" value="{{ produto.codigo }}" required>
+                <input type="text" class="form-control" id="codigo" name="codigo" value="{{ produto.codigo }}" readonly>
             </div>
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome</label>
                 <input type="text" class="form-control" id="nome" name="nome" value="{{ produto.nome }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="quantidade" class="form-label">Quantidade</label>
-                <input type="number" class="form-control" id="quantidade" name="quantidade" value="{{ produto.quantidade }}" required>
             </div>
             <div class="mb-3">
                 <label for="preco" class="form-label">Preço</label>
@@ -24,4 +20,38 @@
             <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const nome = document.getElementById('nome');
+            const quantidade = document.getElementById('quantidade');
+            const preco = document.getElementById('preco');
+    
+            form.addEventListener('submit', function(event) {
+                let valid = true;
+    
+                // Validação do Nome
+                if (nome.value.trim() === '') {
+                    alert('O campo "Nome" é obrigatório.');
+                    valid = false;
+                }
+    
+                // Validação da Quantidade
+                if (quantidade.value.trim() === '' || isNaN(quantidade.value) || parseInt(quantidade.value) < 0) {
+                    alert('O campo "Quantidade" deve ser um número positivo.');
+                    valid = false;
+                }
+    
+                // Validação do Preço
+                if (preco.value.trim() === '' || isNaN(preco.value) || parseFloat(preco.value) < 0) {
+                    alert('O campo "Preço" deve ser um número positivo.');
+                    valid = false;
+                }
+    
+                if (!valid) {
+                    event.preventDefault(); // Impede o envio do formulário se houver erros
+                }
+            });
+        });
+    </script>
 {% endblock %}
