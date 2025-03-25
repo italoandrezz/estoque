@@ -1,78 +1,79 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h1 class="mb-4">Produtos em Estoque</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">📦 Produtos em Estoque</h1>
 
-        <!-- Botões de Alternância de Visualização -->
-        <div class="d-flex justify-content-end mb-3">
-            <button id="btn-card-view" class="btn btn-outline-primary me-2">
-                <i class="bi bi-grid-fill"></i> Cards
+    <!-- Botões de Visualização -->
+    <div class="d-flex justify-content-between mb-3">
+        <form method="GET" action="{{ url_for('index') }}" class="d-flex w-75">
+            <input type="text" name="pesquisa" class="form-control me-2" placeholder="Pesquisar por nome ou código" value="{{ pesquisa }}">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+        <div>
+            <button id="btn-card-view" class="btn btn-outline-primary me-2 active">
+                <i class="bi bi-grid-fill"></i>
             </button>
             <button id="btn-table-view" class="btn btn-outline-primary">
-                <i class="bi bi-list-task"></i> Tabela
+                <i class="bi bi-list-task"></i>
             </button>
         </div>
+    </div>
 
-        <!-- Formulário de Pesquisa -->
-        <form method="GET" action="{{ url_for('index') }}" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="pesquisa" class="form-control" placeholder="Pesquisar por nome ou código" value="{{ pesquisa }}">
-                <button type="submit" class="btn btn-primary">Pesquisar</button>
-            </div>
-        </form>
-
-        <!-- Visualização em Cards -->
-        <div id="card-view">
-            <div class="row">
-                {% for produto in produtos.items %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card {% if produto.quantidade <= produto.limite_minimo %}border-danger{% endif %}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ produto.nome }}</h5>
-                                <p class="card-text">
-                                    <strong>Código:</strong> {{ produto.codigo }}<br>
-                                    <strong>Quantidade:</strong> 
-                                    <span class="{% if produto.quantidade <= produto.limite_minimo %}text-danger{% endif %}">
-                                        {{ produto.quantidade }}
-                                    </span><br>
-                                    <strong>Preço:</strong> R$ {{ "%.2f"|format(produto.preco) }}
-                                </p>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ url_for('editar_produto', id=produto.id) }}" class="btn btn-warning btn-sm">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </a>
-                                    <a href="{{ url_for('entrada_produto', id=produto.id) }}" class="btn btn-success btn-sm">
-                                        <i class="bi bi-box-arrow-in-down"></i> Entrada
-                                    </a>
-                                    <a href="{{ url_for('saida_produto', id=produto.id) }}" class="btn btn-danger btn-sm">
-                                        <i class="bi bi-box-arrow-up"></i> Saída
-                                    </a>
-                                    <a href="{{ url_for('ajuste_estoque', id=produto.id) }}" class="btn btn-info btn-sm">
-                                        <i class="bi bi-sliders"></i> Ajuste
-                                    </a>
-                                    <form action="{{ url_for('excluir_produto', id=produto.id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="bi bi-trash"></i> Excluir
-                                        </button>
-                                    </form>
-                                </div>
+    <!-- Visualização em Cards -->
+    <div id="card-view">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for produto in produtos.items %}
+                <div class="col">
+                    <div class="card h-100 {% if produto.quantidade <= produto.limite_minimo %}border-danger{% endif %}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ produto.nome }}</h5>
+                            <p class="card-text">
+                                <strong>Código:</strong> {{ produto.codigo }}<br>
+                                <strong>Quantidade:</strong> 
+                                <span class="{% if produto.quantidade <= produto.limite_minimo %}text-danger{% endif %}">
+                                    {{ produto.quantidade }}
+                                </span><br>
+                                <strong>Preço:</strong> R$ {{ "%.2f"|format(produto.preco) }}
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{{ url_for('editar_produto', id=produto.id) }}" class="btn btn-warning btn-sm flex-grow-1">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{{ url_for('entrada_produto', id=produto.id) }}" class="btn btn-success btn-sm flex-grow-1">
+                                    <i class="bi bi-box-arrow-in-down"></i>
+                                </a>
+                                <a href="{{ url_for('saida_produto', id=produto.id) }}" class="btn btn-danger btn-sm flex-grow-1">
+                                    <i class="bi bi-box-arrow-up"></i>
+                                </a>
+                                <a href="{{ url_for('ajuste_estoque', id=produto.id) }}" class="btn btn-info btn-sm flex-grow-1">
+                                    <i class="bi bi-sliders"></i>
+                                </a>
+                                <form action="{{ url_for('excluir_produto', id=produto.id) }}" method="POST" class="d-flex flex-grow-1" onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
+                                    <button type="submit" class="btn btn-danger btn-sm w-100">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                {% else %}
-                    <div class="col-12">
-                        <div class="alert alert-info" role="alert">
-                            Nenhum produto encontrado.
-                        </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        Nenhum produto encontrado.
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         </div>
+    </div>
 
-        <!-- Visualização em Tabela -->
-        <div id="table-view" style="display: none;">
-            <table class="table table-dark table-striped">
+    <!-- Visualização em Tabela -->
+    <div id="table-view" style="display: none;">
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Código</th>
@@ -95,34 +96,14 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ produto.id }}">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('editar_produto', id=produto.id) }}">
-                                                <i class="bi bi-pencil"></i> Editar
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('entrada_produto', id=produto.id) }}">
-                                                <i class="bi bi-box-arrow-in-down"></i> Entrada
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('saida_produto', id=produto.id) }}">
-                                                <i class="bi bi-box-arrow-up"></i> Saída
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('ajuste_estoque', id=produto.id) }}">
-                                                <i class="bi bi-sliders"></i> Ajuste
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
+                                        <li><a class="dropdown-item" href="{{ url_for('editar_produto', id=produto.id) }}"><i class="bi bi-pencil me-2"></i>Editar</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('entrada_produto', id=produto.id) }}"><i class="bi bi-box-arrow-in-down me-2"></i>Entrada</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('saida_produto', id=produto.id) }}"><i class="bi bi-box-arrow-up me-2"></i>Saída</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('ajuste_estoque', id=produto.id) }}"><i class="bi bi-sliders me-2"></i>Ajuste</a></li>
+                                        <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <form action="{{ url_for('excluir_produto', id=produto.id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
-                                                <button type="submit" class="dropdown-item text-danger">
-                                                    <i class="bi bi-trash"></i> Excluir
-                                                </button>
+                                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-trash me-2"></i>Excluir</button>
                                             </form>
                                         </li>
                                     </ul>
@@ -137,64 +118,68 @@
                 </tbody>
             </table>
         </div>
+    </div>
 
-        <!-- Paginação -->
-        <nav aria-label="Navegação de páginas">
-            <ul class="pagination">
-                {% if produtos.has_prev %}
-                    <li class="page-item">
-                        <a class="page-link" href="{{ url_for('index', pagina=produtos.prev_num, pesquisa=pesquisa) }}" aria-label="Anterior">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">&laquo;</span>
-                    </li>
-                {% endif %}
+    <!-- Paginação -->
+    {% if produtos.pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if produtos.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index', pagina=produtos.prev_num, pesquisa=pesquisa) }}">&laquo;</a>
+            </li>
+            {% endif %}
+            
+            {% for num in produtos.iter_pages() %}
+            <li class="page-item {% if num == produtos.page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('index', pagina=num, pesquisa=pesquisa) }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            
+            {% if produtos.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index', pagina=produtos.next_num, pesquisa=pesquisa) }}">&raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 
-                {% for num in produtos.iter_pages() %}
-                    {% if num %}
-                        <li class="page-item {% if num == produtos.page %}active{% endif %}">
-                            <a class="page-link" href="{{ url_for('index', pagina=num, pesquisa=pesquisa) }}">{{ num }}</a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-
-                {% if produtos.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="{{ url_for('index', pagina=produtos.next_num, pesquisa=pesquisa) }}" aria-label="Próximo">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">&raquo;</span>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-
-        <!-- Botão para Adicionar Produto -->
+    <!-- Botão Adicionar Produto -->
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
         <a href="{{ url_for('adicionar_produto') }}" class="btn btn-primary">
             <i class="bi bi-plus"></i> Adicionar Produto
         </a>
     </div>
+</div>
 
-    <!-- Script para Alternar entre Visualizações -->
-    <script>
-        document.getElementById('btn-card-view').addEventListener('click', function() {
-            document.getElementById('card-view').style.display = 'block';
-            document.getElementById('table-view').style.display = 'none';
-        });
+<script>
+// Alternar entre visualizações
+document.getElementById('btn-card-view').addEventListener('click', function() {
+    document.getElementById('card-view').style.display = 'block';
+    document.getElementById('table-view').style.display = 'none';
+    this.classList.add('active');
+    document.getElementById('btn-table-view').classList.remove('active');
+});
 
-        document.getElementById('btn-table-view').addEventListener('click', function() {
-            document.getElementById('card-view').style.display = 'none';
-            document.getElementById('table-view').style.display = 'block';
-        });
-    </script>
+document.getElementById('btn-table-view').addEventListener('click', function() {
+    document.getElementById('card-view').style.display = 'none';
+    document.getElementById('table-view').style.display = 'block';
+    this.classList.add('active');
+    document.getElementById('btn-card-view').classList.remove('active');
+});
+
+// Ajustar visualização baseada no tamanho da tela
+function adjustViewBasedOnScreenSize() {
+    if (window.innerWidth < 992) {
+        document.getElementById('card-view').style.display = 'block';
+        document.getElementById('table-view').style.display = 'none';
+        document.getElementById('btn-card-view').classList.add('active');
+        document.getElementById('btn-table-view').classList.remove('active');
+    }
+}
+
+window.addEventListener('load', adjustViewBasedOnScreenSize);
+window.addEventListener('resize', adjustViewBasedOnScreenSize);
+</script>
 {% endblock %}

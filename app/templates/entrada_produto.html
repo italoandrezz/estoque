@@ -1,19 +1,57 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h1 class="mb-4">Entrada de Produto</h1>
-        <form method="POST">
-            <div class="mb-3">
-                <label for="quantidade" class="form-label">Quantidade</label>
-                <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h2 class="h5 mb-0">Entrada de Produto: {{ produto.nome }} ({{ produto.codigo }})</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="quantidade" class="form-label">Quantidade *</label>
+                            <input type="number" class="form-control" id="quantidade" name="quantidade" min="1" required>
+                            <div class="invalid-feedback">Informe uma quantidade válida.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="motivo" class="form-label">Motivo (Opcional)</label>
+                            <input type="text" class="form-control" id="motivo" name="motivo">
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-box-arrow-in-down"></i> Registrar Entrada
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="motivo" class="form-label">Motivo (opcional)</label>
-                <input type="text" class="form-control" id="motivo" name="motivo">
-            </div>
-            <button type="submit" class="btn btn-primary">Registrar Entrada</button>
-            <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
-        </form>
+        </div>
     </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const quantidade = document.getElementById('quantidade');
+    
+    form.addEventListener('submit', function(event) {
+        if (quantidade.value.trim() === '' || isNaN(quantidade.value) || parseInt(quantidade.value) <= 0) {
+            event.preventDefault();
+            quantidade.classList.add('is-invalid');
+            quantidade.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+    
+    quantidade.addEventListener('input', function() {
+        if (this.classList.contains('is-invalid')) {
+            this.classList.remove('is-invalid');
+        }
+    });
+});
+</script>
 {% endblock %}

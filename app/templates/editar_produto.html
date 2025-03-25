@@ -1,57 +1,78 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h1 class="mb-4">Editar Produto</h1>
-        <form method="POST">
-            <div class="mb-3">
-                <label for="codigo" class="form-label">Código</label>
-                <input type="text" class="form-control" id="codigo" name="codigo" value="{{ produto.codigo }}" readonly>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h2 class="h5 mb-0">Editar Produto: {{ produto.nome }} ({{ produto.codigo }})</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="codigo" class="form-label">Código</label>
+                            <input type="text" class="form-control" id="codigo" value="{{ produto.codigo }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="nome" name="nome" value="{{ produto.nome }}" required>
+                            <div class="invalid-feedback">Informe um nome válido.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="preco" class="form-label">Preço (R$) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" step="0.01" class="form-control" id="preco" name="preco" value="{{ produto.preco }}" min="0" required>
+                            </div>
+                            <div class="invalid-feedback">Informe um preço válido.</div>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-lg"></i> Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="nome" class="form-label">Nome</label>
-                <input type="text" class="form-control" id="nome" name="nome" value="{{ produto.nome }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="preco" class="form-label">Preço</label>
-                <input type="number" step="0.01" class="form-control" id="preco" name="preco" value="{{ produto.preco }}" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
-        </form>
+        </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            const nome = document.getElementById('nome');
-            const quantidade = document.getElementById('quantidade');
-            const preco = document.getElementById('preco');
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const nome = document.getElementById('nome');
+    const preco = document.getElementById('preco');
     
-            form.addEventListener('submit', function(event) {
-                let valid = true;
-    
-                // Validação do Nome
-                if (nome.value.trim() === '') {
-                    alert('O campo "Nome" é obrigatório.');
-                    valid = false;
-                }
-    
-                // Validação da Quantidade
-                if (quantidade.value.trim() === '' || isNaN(quantidade.value) || parseInt(quantidade.value) < 0) {
-                    alert('O campo "Quantidade" deve ser um número positivo.');
-                    valid = false;
-                }
-    
-                // Validação do Preço
-                if (preco.value.trim() === '' || isNaN(preco.value) || parseFloat(preco.value) < 0) {
-                    alert('O campo "Preço" deve ser um número positivo.');
-                    valid = false;
-                }
-    
-                if (!valid) {
-                    event.preventDefault(); // Impede o envio do formulário se houver erros
-                }
-            });
-        });
-    </script>
+    form.addEventListener('submit', function(event) {
+        let valid = true;
+        
+        if (nome.value.trim() === '') {
+            nome.classList.add('is-invalid');
+            valid = false;
+        } else {
+            nome.classList.remove('is-invalid');
+        }
+        
+        if (preco.value.trim() === '' || isNaN(preco.value) || parseFloat(preco.value) < 0) {
+            preco.classList.add('is-invalid');
+            valid = false;
+        } else {
+            preco.classList.remove('is-invalid');
+        }
+        
+        if (!valid) {
+            event.preventDefault();
+            const firstError = document.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

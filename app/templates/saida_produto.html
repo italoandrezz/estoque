@@ -1,19 +1,85 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h1 class="mb-4">Saída de Produto</h1>
-        <form method="POST">
-            <div class="mb-3">
-                <label for="quantidade" class="form-label">Quantidade</label>
-                <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="h5 mb-0">Saída de Produto: {{ produto.nome }} ({{ produto.codigo }})</h2>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Estoque atual: {{ produto.quantidade }}</p>
+                    <form method="POST" id="formSaida">
+                        <div class="mb-3">
+                            <label for="quantidadeSaida" class="form-label">Quantidade *</label>
+                            <input type="number" class="form-control" id="quantidadeSaida" name="quantidade" 
+                                   min="1" max="{{ produto.quantidade }}" required>
+                            <div class="invalid-feedback">Informe uma quantidade válida.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="motivoSaida" class="form-label">Motivo (Opcional)</label>
+                            <input type="text" class="form-control" id="motivoSaida" name="motivo">
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-box-arrow-up"></i> Registrar Saída
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="motivo" class="form-label">Motivo (opcional)</label>
-                <input type="text" class="form-control" id="motivo" name="motivo">
-            </div>
-            <button type="submit" class="btn btn-primary">Registrar Saída</button>
-            <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
-        </form>
+        </div>
     </div>
+</div>
+
+<script>
+// Desativa verificação de tipos para evitar falsos positivos
+// @ts-nocheck
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formSaida');
+    const quantidadeInput = document.getElementById('quantidadeSaida');
+    // Converte o valor Jinja2 para JavaScript
+    const estoqueAtual = parseInt('{{ produto.quantidade }}');
+    
+    // Validação do formulário
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        const quantidade = parseInt(quantidadeInput.value);
+        
+        // Valida se é um número válido
+        if (isNaN(quantidade) || quantidade <= 0) {
+            quantidadeInput.classList.add('is-invalid');
+            quantidadeInput.nextElementSibling.textContent = 'Informe uma quantidade válida (maior que zero)';
+            isValid = false;
+        } 
+        // Valida se há estoque suficiente
+        else if (quantidade > estoqueAtual) {
+            quantidadeInput.classList.add('is-invalid');
+            quantidadeInput.nextElementSibling.textContent = 'Quantidade insuficiente em estoque';
+            isValid = false;
+        }
+        
+        // Impede envio se inválido
+        if (!isValid) {
+            event.preventDefault();
+            quantidadeInput.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    });
+    
+    // Remove mensagem de erro quando usuário digitar
+    quantidadeInput.addEventListener('input', function() {
+        if (this.classList.contains('is-invalid')) {
+            this.classList.remove('is-invalid');
+        }
+    });
+});
+</script>
 {% endblock %}
