@@ -114,25 +114,27 @@
         </div>
     </div>
 
-    <!-- Visualização em Tabela -->
+    <!-- Visualização em Tabela (Atualizada) -->
     <div id="table-view" style="display: none;">
         <div class="table-responsive">
-            <table class="table table-dark table-striped table-hover">
-                <thead>
+            <table class="table table-hover align-middle">
+                <thead class="table-primary">
                     <tr>
-                        <th>Código</th>
-                        <th>Nome</th>
-                        <th>Quantidade</th>
-                        <th>Preço</th>
-                        <th>Ações</th>
+                        <th><i class="bi bi-hash me-2"></i>Código</th>
+                        <th><i class="bi bi-box-seam me-2"></i>Nome</th>
+                        <th><i class="bi bi-123 me-2"></i>Quantidade</th>
+                        <th><i class="bi bi-currency-dollar me-2"></i>Preço</th>
+                        <th><i class="bi bi-three-dots-vertical me-2"></i>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for produto in produtos.items %}
-                        <tr class="{% if produto.quantidade <= produto.limite_minimo %}table-danger{% endif %}">
+                        <tr class="{% if produto.quantidade <= produto.limite_minimo %}table-danger{% else %}hover-shadow{% endif %}">
                             <td>{{ produto.codigo }}</td>
                             <td>{{ produto.nome }}</td>
-                            <td>{{ produto.quantidade }}</td>
+                            <td class="{% if produto.quantidade <= produto.limite_minimo %}text-danger fw-bold{% endif %}">
+                                {{ produto.quantidade }}
+                            </td>
                             <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
                             <td>
                                 <div class="dropdown">
@@ -156,7 +158,11 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="5" class="text-center">Nenhum produto encontrado.</td>
+                            <td colspan="5" class="text-center py-4">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> Nenhum produto encontrado
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -270,8 +276,24 @@ window.addEventListener('resize', adjustViewBasedOnScreenSize);
 }
 
 /* Estilos para a tabela */
+.table-primary th {
+    background-color: #4361ee;
+    color: white;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.2s ease;
+}
+
 .table-hover tbody tr {
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
 }
 
 /* Ajustes responsivos */
@@ -283,6 +305,22 @@ window.addEventListener('resize', adjustViewBasedOnScreenSize);
     
     .d-flex.justify-content-between form {
         width: 100% !important;
+    }
+    
+    /* Ajuste para tabela em mobile */
+    #table-view .d-flex {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    #table-view .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Ajuste para dropdown em mobile */
+    .dropdown-menu {
+        position: absolute !important;
     }
 }
 </style>
