@@ -1,9 +1,10 @@
 from datetime import datetime
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, Response
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import or_
 from . import db, login_manager
 from .models import Produto, Usuario, Movimentacao
+from .reports import generate_excel, generate_pdf, generate_excel_historico, generate_pdf_historico
 import random
 
 @login_manager.user_loader
@@ -25,6 +26,7 @@ def init_routes(app):
     def index():
         pesquisa = request.args.get('pesquisa', '').strip()
         pagina = request.args.get('pagina', 1, type=int)
+        formato = request.args.get('formato')
         por_pagina = 10
 
         query = Produto.query
@@ -35,8 +37,65 @@ def init_routes(app):
                 Produto.codigo.ilike(f'%{pesquisa}%')
             ))
 
-        produtos = query.paginate(page=pagina, per_page=por_pagina)
-        return render_template('index.html', produtos=produtos, pesquisa=pesquisa)
+        produtos = query.all() if formato else query.paginate(page=pagina, per_page=por_pagina)
+
+        # Geração de relatórios
+        if formato in ['excel', 'pdf']:
+            if formato == 'excel':
+                output = generate_excel(produtos)
+                return Response(
+                    output,
+                    mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    headers={"Content-Disposition": "attachment;filename=relatorio_estoque.xlsx"}
+                )
+            elif formato == 'pdf':
+                output = generate_pdf(produtos)
+                return Response(
+                    output,
+                    mimetype="application/pdf",
+                    headers={"Content-Disposition": "attachment;filename=relatorio_estoque.pdf"}
+                )
+
+        produtos_paginados = query.paginate(page=pagina, per_page=por_pagina)
+        return render_template('index.html', produtos=produtos_paginados, pesquisa=pesquisa)
+    
+    @app.route('/exportar_historico')
+    @login_required
+    def exportar_historico():
+        tipo = request.args.get('tipo', '')
+        data_inicio = request.args.get('data_inicio', '')
+        data_fim = request.args.get('data_fim', '')
+        formato = request.args.get('formato', 'excel')
+
+        query = Movimentacao.query.order_by(Movimentacao.data.desc())
+
+        if tipo:
+            query = query.filter_by(tipo=tipo)
+        
+        if data_inicio:
+            data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
+            query = query.filter(Movimentacao.data >= data_inicio)
+        
+        if data_fim:
+            data_fim = datetime.strptime(data_fim + ' 23:59:59', '%Y-%m-%d %H:%M:%S')
+            query = query.filter(Movimentacao.data <= data_fim)
+
+        movimentacoes = query.all()
+
+        if formato == 'excel':
+            output = generate_excel_historico(movimentacoes)
+            return Response(
+                output,
+                mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                headers={"Content-Disposition": "attachment;filename=historico_estoque.xlsx"}
+            )
+        else:
+            output = generate_pdf_historico(movimentacoes)
+            return Response(
+                output,
+                mimetype="application/pdf",
+                headers={"Content-Disposition": "attachment;filename=historico_estoque.pdf"}
+            )
     
     @app.context_processor
     def inject_now():

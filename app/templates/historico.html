@@ -4,35 +4,58 @@
 <div class="container mt-4">
     <h1 class="mb-4">📋 Histórico de Movimentações</h1>
     
-    <!-- Filtros -->
+    <!-- Filtros e Exportação - Versão Corrigida -->
     <div class="card mb-4">
         <div class="card-body">
-            <form method="GET" action="{{ url_for('historico') }}">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label for="tipo" class="form-label">Tipo</label>
-                        <select class="form-select" id="tipo" name="tipo">
-                            <option value="">Todos</option>
-                            <option value="entrada" {% if filtros.tipo == 'entrada' %}selected{% endif %}>Entrada</option>
-                            <option value="saida" {% if filtros.tipo == 'saida' %}selected{% endif %}>Saída</option>
-                            <option value="ajuste" {% if filtros.tipo == 'ajuste' %}selected{% endif %}>Ajuste</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="data_inicio" class="form-label">Data Início</label>
-                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="{{ filtros.data_inicio }}">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="data_fim" class="form-label">Data Fim</label>
-                        <input type="date" class="form-control" id="data_fim" name="data_fim" value="{{ filtros.data_fim }}">
-                    </div>
-                    <div class="col-md-3 d-flex align-items-end">
+            <div class="row g-3 align-items-end">
+                <!-- Filtro Tipo -->
+                <div class="col-md-2">
+                    <label for="tipo" class="form-label">Tipo</label>
+                    <select class="form-select" id="tipo" name="tipo">
+                        <option value="">Todos</option>
+                        <option value="entrada" {% if filtros.tipo == 'entrada' %}selected{% endif %}>Entrada</option>
+                        <option value="saida" {% if filtros.tipo == 'saida' %}selected{% endif %}>Saída</option>
+                        <option value="ajuste" {% if filtros.tipo == 'ajuste' %}selected{% endif %}>Ajuste</option>
+                    </select>
+                </div>
+                
+                <!-- Filtro Data Início -->
+                <div class="col-md-2">
+                    <label for="data_inicio" class="form-label">Data Início</label>
+                    <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="{{ filtros.data_inicio }}">
+                </div>
+                
+                <!-- Filtro Data Fim -->
+                <div class="col-md-2">
+                    <label for="data_fim" class="form-label">Data Fim</label>
+                    <input type="date" class="form-control" id="data_fim" name="data_fim" value="{{ filtros.data_fim }}">
+                </div>
+                
+                <!-- Botão Filtrar -->
+                <div class="col-md-2">
+                    <form method="GET" action="{{ url_for('historico') }}">
+                        <input type="hidden" name="tipo" value="{{ filtros.tipo }}">
+                        <input type="hidden" name="data_inicio" value="{{ filtros.data_inicio }}">
+                        <input type="hidden" name="data_fim" value="{{ filtros.data_fim }}">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-funnel"></i> Filtrar
                         </button>
+                    </form>
+                </div>
+                
+                <!-- Botão Exportar - Corrigido -->
+                <div class="col-md-2 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-success dropdown-toggle w-100" type="button" id="dropdownExportHistorico" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-download"></i> Exportar
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownExportHistorico">
+                            <li><a class="dropdown-item" href="{{ url_for('exportar_historico', formato='excel', tipo=filtros.tipo, data_inicio=filtros.data_inicio, data_fim=filtros.data_fim) }}">Excel</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('exportar_historico', formato='pdf', tipo=filtros.tipo, data_inicio=filtros.data_inicio, data_fim=filtros.data_fim) }}">PDF</a></li>
+                        </ul>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 
