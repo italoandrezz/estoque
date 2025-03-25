@@ -13,21 +13,56 @@
             </button>
         </form>
         <div>
-            <div class="dropdown d-inline-block me-2">
-                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownExport" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-download"></i> Exportar
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownExport">
-                    <li><a class="dropdown-item" href="{{ url_for('index', formato='excel', pesquisa=pesquisa) }}">Excel</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('index', formato='pdf', pesquisa=pesquisa) }}">PDF</a></li>
-                </ul>
-            </div>
+            <!-- Botão para abrir modal de exportação -->
+            <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#exportModal">
+                <i class="bi bi-download"></i> Exportar
+            </button>
             <button id="btn-card-view" class="btn btn-outline-primary me-2 active">
                 <i class="bi bi-grid-fill"></i>
             </button>
             <button id="btn-table-view" class="btn btn-outline-primary">
                 <i class="bi bi-list-task"></i>
             </button>
+        </div>
+    </div>
+
+    <!-- Modal de Exportação -->
+    <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 bg-light">
+                    <h5 class="modal-title text-primary" id="exportModalLabel">
+                        <i class="bi bi-download me-2"></i>Exportar Dados
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="d-flex flex-column gap-2">
+                        <a href="{{ url_for('index', formato='excel', pesquisa=pesquisa) }}" 
+                           class="btn btn-outline-primary d-flex align-items-center justify-content-start px-3 py-2">
+                            <i class="bi bi-file-earmark-excel fs-5 me-3 text-success"></i>
+                            <div class="text-start">
+                                <div class="fw-bold">Exportar Excel</div>
+                                <small class="text-muted">Formato .xlsx</small>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ url_for('index', formato='pdf', pesquisa=pesquisa) }}" 
+                           class="btn btn-outline-primary d-flex align-items-center justify-content-start px-3 py-2">
+                            <i class="bi bi-file-earmark-pdf fs-5 me-3 text-danger"></i>
+                            <div class="text-start">
+                                <div class="fw-bold">Exportar PDF</div>
+                                <small class="text-muted">Formato .pdf</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-1"></i> Fechar
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -191,4 +226,64 @@ function adjustViewBasedOnScreenSize() {
 window.addEventListener('load', adjustViewBasedOnScreenSize);
 window.addEventListener('resize', adjustViewBasedOnScreenSize);
 </script>
+
+<style>
+/* Estilos para o modal de exportação */
+#exportModal .modal-content {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+#exportModal .btn-outline-primary {
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+    border-radius: 0.375rem;
+    text-align: left;
+}
+
+#exportModal .btn-outline-primary:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#exportModal .modal-header {
+    padding: 1rem 1.25rem;
+}
+
+#exportModal .modal-body {
+    padding: 1.25rem;
+}
+
+#exportModal .modal-footer {
+    padding: 0.75rem 1.25rem;
+}
+
+/* Estilos para cards de produtos */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Estilos para a tabela */
+.table-hover tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .d-flex.justify-content-between form {
+        width: 100% !important;
+    }
+}
+</style>
 {% endblock %}
