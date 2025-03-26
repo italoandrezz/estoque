@@ -201,6 +201,22 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
+
+.pagination .page-item.active .page-link {
+    background-color: #4361ee !important; /* Cor de fundo da página ativa */
+    color: white !important; /* Cor do número da página ativa */
+    border-color: #4361ee !important; /* Cor da borda */
+}
+
+.pagination .page-link {
+    color: #4361ee; /* Cor dos números das páginas */
+}
+
+.pagination .page-link:hover {
+    background-color: #e0e7ff; /* Fundo ao passar o mouse */
+    color: #4361ee;
+}
+
 /* Estilos gerais */
 .hover-shadow:hover {
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);

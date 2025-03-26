@@ -234,6 +234,22 @@ window.addEventListener('resize', adjustViewBasedOnScreenSize);
 </script>
 
 <style>
+    
+.pagination .page-item.active .page-link {
+    background-color: #4361ee !important; /* Cor de fundo da página ativa */
+    color: white !important; /* Cor do número da página ativa */
+    border-color: #4361ee !important; /* Cor da borda */
+}
+
+.pagination .page-link {
+    color: #4361ee; /* Cor dos números das páginas */
+}
+
+.pagination .page-link:hover {
+    background-color: #e0e7ff; /* Fundo ao passar o mouse */
+    color: #4361ee;
+}
+
 /* Estilos para o modal de exportação */
 #exportModal .modal-content {
     border-radius: 0.5rem;
